@@ -63,6 +63,8 @@ public class TransportClient extends WebSocketClient {
     String host = String.valueOf(SpringTool.getPropertiesValue("sonic.agent.host"));
     String version = String.valueOf(SpringTool.getPropertiesValue("spring.version"));
     Integer port = Integer.valueOf(SpringTool.getPropertiesValue("sonic.agent.port"));
+    Integer servicePort = Integer.valueOf(SpringTool.getPropertiesValue("sonic.agent.service-port"));
+    String wsScheme = String.valueOf(SpringTool.getPropertiesValue("sonic.agent.ws-scheme"));
 
     public TransportClient(URI serverUri) {
         super(serverUri);
@@ -249,9 +251,11 @@ public class TransportClient extends WebSocketClient {
                         agentInfo.put("msg", "agentInfo");
                         agentInfo.put("agentId", BytesTool.agentId);
                         agentInfo.put("port", port);
+                        agentInfo.put("servicePort", servicePort);
                         agentInfo.put("version", "v" + version);
                         agentInfo.put("systemType", System.getProperty("os.name"));
                         agentInfo.put("host", host);
+                        agentInfo.put("wsScheme", wsScheme);
                         agentInfo.put("hasHub", PHCTool.isSupport() ? 1 : 0);
                         TransportWorker.client.send(agentInfo.toJSONString());
                         IDevice[] iDevices = AndroidDeviceBridgeTool.getRealOnLineDevices();
