@@ -136,12 +136,12 @@ public class EnvCheckTool {
             adb.setExecutable(true);
             adb.setWritable(true);
             adb.setReadable(true);
-            List<String> ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", adb.getAbsolutePath()));
-            if (ver.size() == 0) {
+            var ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", adb.getAbsolutePath()));
+            if (ver._1 != 0 || ver._2.size() == 0) {
                 printFail(type);
                 throw new RuntimeException("Can not use adb! Please ensure that `adb` command useful!" + (system.toUpperCase(Locale.ROOT).contains("MAC") ? " You can see " + HELP_URL + " ." : ""));
             } else {
-                adbVersion = ver.get(0);
+                adbVersion = ver._2.get(0);
                 printPass(type);
                 return true;
             }
@@ -163,9 +163,9 @@ public class EnvCheckTool {
             sasBinary.setExecutable(true);
             sasBinary.setWritable(true);
             sasBinary.setReadable(true);
-            List<String> ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", sasBinary.getAbsolutePath()));
-            sasPrintVersion = (ver.size() == 0 ? "null" : ver.get(0));
-            if (ver.size() == 0 || !BytesTool.versionCheck(sasVersion, ver.get(0))) {
+            var ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", sasBinary.getAbsolutePath()));
+            sasPrintVersion = (ver._1 != 0 || ver._2.size() == 0 ? "null" : ver._2.get(0));
+            if (ver._1 != 0 || ver._2.size() == 0 || !BytesTool.versionCheck(sasVersion, ver._2.get(0))) {
                 printFail(type);
                 throw new RuntimeException(String.format("Start sonic-android-supply failed! Please check sonic-android-supply version or use [chmod -R 777 %s]. if still failed, you can try with [sudo]%s", new File("plugins").getAbsolutePath(), (system.toUpperCase(Locale.ROOT).contains("MAC") ? " or you can see " + HELP_URL : "")));
             } else {
@@ -190,9 +190,9 @@ public class EnvCheckTool {
             sibBinary.setExecutable(true);
             sibBinary.setWritable(true);
             sibBinary.setReadable(true);
-            List<String> ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", sibBinary.getAbsolutePath()));
-            sibPrintVersion = (ver.size() == 0 ? "null" : ver.get(0));
-            if (ver.size() == 0 || !BytesTool.versionCheck(sibVersion, ver.get(0))) {
+            var ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" version", sibBinary.getAbsolutePath()));
+            sibPrintVersion = (ver._1 != 0 || ver._2.size() == 0 ? "null" : ver._2.get(0));
+            if (ver._1 != 0 || ver._2.size() == 0 || !BytesTool.versionCheck(sibVersion, ver._2.get(0))) {
                 printFail(type);
                 throw new RuntimeException(String.format("Start sonic-ios-bridge failed! Please check sib's version or use [chmod -R 777 %s]. if still failed, you can try with [sudo]%s", new File("plugins").getAbsolutePath(), (system.toUpperCase(Locale.ROOT).contains("MAC") ? " or you can see " + HELP_URL : "")));
             } else {
@@ -217,9 +217,9 @@ public class EnvCheckTool {
             sgmBinary.setExecutable(true);
             sgmBinary.setWritable(true);
             sgmBinary.setReadable(true);
-            List<String> ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" -version", sgmBinary.getAbsolutePath()));
-            sgmPrintVersion = (ver.size() == 0 ? "null" : ver.get(0));
-            if (ver.size() == 0 || !BytesTool.versionCheck(sgmVersion, ver.get(0).replace("sonic-go-mitmproxy:", "").trim())) {
+            var ver = ProcessCommandTool.getProcessLocalCommand(String.format("\"%s\" -version", sgmBinary.getAbsolutePath()));
+            sgmPrintVersion = (ver._1 != 0 || ver._2.size() == 0 ? "null" : ver._2.get(0));
+            if (ver._1 != 0 || ver._2.size() == 0 || !BytesTool.versionCheck(sgmVersion, ver._2.get(0).replace("sonic-go-mitmproxy:", "").trim())) {
                 printFail(type);
                 throw new RuntimeException(String.format("Start sonic-go-mitmproxy failed! Please check sonic-go-mitmproxy version or use [chmod -R 777 %s]. if still failed, you can try with [sudo]%s", new File("plugins").getAbsolutePath(), (system.toUpperCase(Locale.ROOT).contains("MAC") ? " or you can see " + HELP_URL : "")));
             } else {

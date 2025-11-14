@@ -163,13 +163,16 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
     public static List<String> getDeviceList() {
         List<String> result = new ArrayList<>();
         String commandLine = "%s devices";
-        List<String> data = ProcessCommandTool.getProcessLocalCommand(String.format(commandLine, sib));
-        for (String a : data) {
-            if (a.length() == 0 || a.contains("no device")) {
-                break;
-            }
-            if (a.contains(" ")) {
-                result.add(a.substring(0, a.indexOf(" ")));
+        var data = ProcessCommandTool.getProcessLocalCommand(String.format(commandLine, sib));
+        if(data._1 == 0)
+        {
+            for (String a : data._2) {
+                if (a.length() == 0 || a.contains("no device")) {
+                    break;
+                }
+                if (a.contains(" ")) {
+                    result.add(a.substring(0, a.indexOf(" ")));
+                }
             }
         }
         return result;
@@ -587,8 +590,9 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
 
     public static JSONObject getBattery(String udId) {
         String commandLine = "%s battery -u %s -j";
-        String res = ProcessCommandTool.getProcessLocalCommandStr(commandLine.formatted(sib, udId));
-        return JSONObject.parseObject(res, JSONObject.class);
+        var result = ProcessCommandTool.getProcessLocalCommandStr(commandLine.formatted(sib, udId));
+        if(result._1 != 0) throw new RuntimeException(result._2);
+        return JSONObject.parseObject(result._2, JSONObject.class);
     }
 
     public static void launch(String udId, String pkg) {
@@ -613,8 +617,9 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
 
     public static int battery(String udId) {
         String commandLine = "%s battery -u %s -j";
-        String re = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
-        return JSON.parseObject(re).getInteger("CurrentCapacity");
+        var result = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        if(result._1 != 0) throw new RuntimeException(result._2);
+        return JSON.parseObject(result._2).getInteger("CurrentCapacity");
     }
 
     public static void stopWebInspector(String udId) {
@@ -806,15 +811,18 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
 
     public static int getOrientation(String udId) {
         String commandLine = "%s orientation -u %s";
-        return BytesTool.getInt(ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId)));
+        var result = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        if(result._1 != 0) throw new RuntimeException(result._2);
+        return BytesTool.getInt(result._2);
     }
 
     public static String getSize(String udId) {
         String commandLine = "%s info -d com.apple.mobile.iTunes -u %s";
-        String re = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        var result = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        if(result._1 != 0) throw new RuntimeException(result._2);
         String size = "";
         try {
-            JSONObject r = JSON.parseObject(re);
+            JSONObject r = JSON.parseObject(result._2);
             size = r.getInteger("ScreenWidth") + "x" + r.getInteger("ScreenHeight");
         } catch (Throwable ignored) {
         }
@@ -823,10 +831,11 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
 
     public static int getScreenScale(String udId) {
         String commandLine = "%s info -d com.apple.mobile.iTunes -u %s";
-        String re = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        var result = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        if(result._1 != 0) throw new RuntimeException(result._2);
         int size = 2;
         try {
-            JSONObject r = JSON.parseObject(re);
+            JSONObject r = JSON.parseObject(result._2);
             size = r.getInteger("ScreenScaleFactor");
         } catch (Throwable ignored) {
         }
@@ -835,8 +844,8 @@ public class SibTool implements ApplicationListener<ContextRefreshedEvent> {
 
     public static void mount(String udId) {
         String commandLine = "%s mount -u %s";
-        String re = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
-        logger.info(re);
+        var result = ProcessCommandTool.getProcessLocalCommandStr(String.format(commandLine, sib, udId));
+        logger.info(result._2);
     }
 
     public static List<JSONObject> getWebView(String udId) {

@@ -260,15 +260,20 @@ public class TransportClient extends WebSocketClient {
                         TransportWorker.client.send(agentInfo.toJSONString());
                         IDevice[] iDevices = AndroidDeviceBridgeTool.getRealOnLineDevices();
                         for (IDevice d : iDevices) {
-                            String status = AndroidDeviceManagerMap.getStatusMap().get(d.getSerialNumber());
+                            String sn = d.getSerialNumber();
+                            if (sn == null || sn.isBlank()) continue;
+
+                            String status = AndroidDeviceManagerMap.getStatusMap().get(sn);
                             if (status != null) {
-                                AndroidDeviceLocalStatus.send(d.getSerialNumber(), status);
+                                AndroidDeviceLocalStatus.send(sn, status);
                             } else {
-                                AndroidDeviceLocalStatus.send(d.getSerialNumber(), d.getState() == null ? null : d.getState().toString());
+                                AndroidDeviceLocalStatus.send(sn, d.getState() == null ? null : d.getState().toString());
                             }
                         }
                         List<String> udIds = SibTool.getDeviceList();
                         for (String u : udIds) {
+                            if (u == null || u.isBlank()) continue;
+
                             String status = IOSDeviceManagerMap.getMap().get(u);
                             if (status != null) {
                                 IOSDeviceLocalStatus.send(u, status);

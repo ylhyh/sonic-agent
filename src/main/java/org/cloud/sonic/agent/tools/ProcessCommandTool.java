@@ -22,18 +22,21 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+
 public class ProcessCommandTool {
 
-    public static String getProcessLocalCommandStr(String commandLine) {
-        List<String> processLocalCommand = getProcessLocalCommand(commandLine);
+    public static Tuple2<Integer, String> getProcessLocalCommandStr(String commandLine) {
+        var processLocalCommand = getProcessLocalCommand(commandLine);
         StringBuilder stringBuilder = new StringBuilder("");
-        for (String s : processLocalCommand) {
+        for (String s : processLocalCommand._2) {
             stringBuilder.append(s);
         }
-        return stringBuilder.toString();
+        return Tuple.of(processLocalCommand._1, stringBuilder.toString());
     }
 
-    public static List<String> getProcessLocalCommand(String commandLine) {
+    public static Tuple2<Integer, List<String>> getProcessLocalCommand(String commandLine) {
         Process process = null;
         InputStreamReader inputStreamReader = null;
         InputStreamReader errorStreamReader;
@@ -63,12 +66,12 @@ public class ProcessCommandTool {
 
             int resultCode = process.waitFor();
             if (resultCode > 0 && sdrErrorResult.size() > 0) {
-                return sdrErrorResult;
+                return Tuple.of(resultCode, sdrErrorResult);
             } else {
-                return sdrResult;
+                return Tuple.of(resultCode, sdrResult);
             }
         } catch (Exception e) {
-            return new ArrayList<String>();
+            return Tuple.of(1, new ArrayList<String>(List.of(e.getMessage())));
         } finally {
             try {
                 if (null != consoleInput) {
