@@ -45,6 +45,8 @@ import java.util.UUID;
 @Component
 public class UploadTools {
     private final static Logger logger = LoggerFactory.getLogger(UploadTools.class);
+    @Value("${sonic.server.scheme}")
+    private String scheme;
     @Value("${sonic.server.host}")
     private String host;
     @Value("${sonic.server.port}")
@@ -56,7 +58,7 @@ public class UploadTools {
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
         UploadTools.restTemplate = restTemplate;
-        baseUrl = ("http://" + host + ":" + port + "/server/api/folder").replace(":80/", "/");
+        baseUrl = (scheme + "://" + host + ":" + port + "/server/api/folder").replace(":80/", "/").replace(":443/", "/");
     }
 
     public static String upload(File uploadFile, String type) {
